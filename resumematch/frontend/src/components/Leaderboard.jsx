@@ -11,8 +11,15 @@ const BAND_COUNTS = (results) => ({
 export default function Leaderboard({ results, sessionId }) {
   const bands = BAND_COUNTS(results)
 
-  const handleExport = () => {
-    window.open(getExportUrl(sessionId), '_blank')
+  const handleExport = async () => {
+    const response = await fetch(getExportUrl(sessionId))
+    const blob = await response.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `session_${sessionId.slice(0, 8)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
   return (
