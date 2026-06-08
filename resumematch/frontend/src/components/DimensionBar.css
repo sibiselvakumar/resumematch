@@ -1,0 +1,97 @@
+.dim-bar {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.dim-bar:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.dim-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.dim-bar-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dim-bar-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.dim-bar-weight {
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--bg);
+  padding: 1px 6px;
+  border-radius: 99px;
+}
+
+.dim-bar-score {
+  font-size: 14px;
+  font-weight: 700;
+  min-width: 32px;
+  text-align: right;
+}
+
+.dim-bar-score--green { color: var(--success); }
+.dim-bar-score--yellow { color: var(--warning); }
+.dim-bar-score--red { color: var(--danger); }
+
+.dim-bar-track {
+  height: 6px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.dim-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dim-bar-fill--green { background: var(--success); }
+.dim-bar-fill--yellow { background: var(--warning); }
+.dim-bar-fill--red { background: var(--danger); }
+
+.dim-bar-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.dim-bar-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.skill-chip {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+.skill-chip--matched {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.skill-chip--missing {
+  background: var(--danger-light);
+  color: var(--danger);
+}

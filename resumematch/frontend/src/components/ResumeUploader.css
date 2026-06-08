@@ -1,0 +1,112 @@
+.resume-uploader {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.resume-drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.resume-drop-zone:hover,
+.resume-drop-zone--has-files {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.resume-drop-icon {
+  font-size: 28px;
+}
+
+.resume-drop-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.resume-drop-sub {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.resume-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.resume-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.resume-item-rank {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  min-width: 24px;
+}
+
+.resume-item-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.resume-item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.resume-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resume-item-size {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.resume-item-remove {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.resume-item-remove:hover {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+.resume-hint {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+}

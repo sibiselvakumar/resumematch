@@ -1,0 +1,51 @@
+{
+  "project": "resume_cowork",
+  "version": "1.0",
+  "mode": "team",
+  "github_id": "shrutiguna31",
+  "audit_tag": "shrutiguna31",
+  "stack": {
+    "work_type": "code",
+    "language": [
+      "python3.12"
+    ],
+    "cloud": [
+      "none"
+    ],
+    "libraries": []
+  },
+  "standards": "raven-v3.0",
+  "approval_mode": "first_responder",
+  "guard": {
+    "enabled": true,
+    "db": {
+      "mass_deletion_threshold": 100
+    },
+    "git": {
+      "force_push": "hard_block"
+    },
+    "infra": {
+      "terraform_state": "hard_block"
+    },
+    "firewall": {
+      "open_world": "hard_block"
+    }
+  },
+  "style": {
+    "max_lines_per_file": 150,
+    "require_type_hints": true,
+    "require_docstrings": true,
+    "forbid_print_statements": true
+  },
+  "changelog": [
+    {
+      "version": "1.0",
+      "changed_by": "shrutiguna31@gmail.com",
+      "github_id": "shrutiguna31",
+      "audit_tag": "shrutiguna31",
+      "changed_at": "2026-06-08T18:55:36Z",
+      "changes": "Init: mode=team work_type=code platform=Windows",
+      "pr": "pending"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# Environment secrets
+.env
+resumematch/backend/.env
+
+# SQLite DB (ephemeral on Render anyway)
+*.db
+
+# Node
+resumematch/frontend/node_modules/
+resumematch/frontend/dist/
+
+# Raven internals
+.raven/manifest.secrets.json
+
+# OS
+.DS_Store
+Thumbs.db

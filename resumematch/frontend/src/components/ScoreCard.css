@@ -1,0 +1,115 @@
+.score-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border);
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.score-card:hover {
+  box-shadow: var(--shadow);
+}
+
+.score-card--green { border-left-color: var(--success); }
+.score-card--yellow { border-left-color: var(--warning); }
+.score-card--red { border-left-color: var(--danger); }
+
+.score-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.score-card-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rank-badge {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  min-width: 28px;
+}
+
+.candidate-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.candidate-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.candidate-rec {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.score-card-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.overall-score {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.overall-score--green { color: var(--success); }
+.overall-score--yellow { color: var(--warning); }
+.overall-score--red { color: var(--danger); }
+
+.overall-score-max {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.expand-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: var(--muted);
+  transition: background 0.15s;
+}
+
+.expand-btn:hover {
+  background: var(--border);
+}
+
+.score-card-summary {
+  font-size: 13px;
+  color: var(--muted);
+  padding: 0 20px 14px;
+  line-height: 1.5;
+}
+
+.score-card-error {
+  font-size: 12px;
+  color: var(--danger);
+  background: var(--danger-light);
+  padding: 6px 20px;
+  margin: 0 20px 12px;
+  border-radius: 6px;
+}
+
+.score-card-dimensions {
+  border-top: 1px solid var(--border);
+  padding: 16px 20px;
+  background: #fafbfc;
+}
