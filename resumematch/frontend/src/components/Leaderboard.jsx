@@ -1,5 +1,4 @@
 import ScoreCard from './ScoreCard'
-import { getExportUrl } from '../api'
 import './Leaderboard.css'
 
 const BAND_COUNTS = (results) => ({
@@ -8,16 +7,56 @@ const BAND_COUNTS = (results) => ({
   weak: results.filter(r => r.overall_score < 60).length,
 })
 
+function toCSV(results) {
+  const headers = [
+    'Rank', 'Candidate', 'Overall Score', 'Recommendation',
+    'Skills Score', 'Matched Skills', 'Missing Skills',
+    'Experience Score', 'Experience Notes',
+    'Role Alignment Score', 'Role Alignment Notes',
+    'Education Score', 'Education Notes',
+    'Responsibilities Score', 'Responsibilities Notes',
+    'Summary',
+  ]
+  const escape = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`
+  const rows = results.map((r, i) => {
+    const dims = r.dimensions ?? {}
+    const sm = dims.skills_match ?? {}
+    const exp = dims.experience ?? {}
+    const ra = dims.role_alignment ?? {}
+    const edu = dims.education ?? {}
+    const resp = dims.responsibilities ?? {}
+    return [
+      i + 1,
+      r.candidate_name,
+      r.overall_score,
+      r.recommendation,
+      sm.score ?? '',
+      (sm.matched_skills ?? []).join(', '),
+      (sm.missing_skills ?? []).join(', '),
+      exp.score ?? '',
+      exp.note ?? '',
+      ra.score ?? '',
+      ra.note ?? '',
+      edu.score ?? '',
+      edu.note ?? '',
+      resp.score ?? '',
+      resp.note ?? '',
+      r.summary ?? '',
+    ].map(escape).join(',')
+  })
+  return [headers.map(escape).join(','), ...rows].join('\r\n')
+}
+
 export default function Leaderboard({ results, sessionId }) {
   const bands = BAND_COUNTS(results)
 
-  const handleExport = async () => {
-    const response = await fetch(getExportUrl(sessionId))
-    const blob = await response.blob()
+  const handleExport = () => {
+    const csv = toCSV(results)
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `session_${sessionId.slice(0, 8)}.csv`
+    a.download = `session_${(sessionId ?? 'export').slice(0, 8)}.csv`
     a.click()
     URL.revokeObjectURL(url)
   }
