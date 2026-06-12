@@ -176,7 +176,6 @@ export default function App() {
 
       <footer className="footer">
         ResumeMatch · Internal HR Tool · Powered by Groq + Llama 3.1 70B
-        &nbsp;·&nbsp;Made by <a href="https://github.com/shrutiguna" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>shrutiguna</a>
       </footer>
     </div>
   )
