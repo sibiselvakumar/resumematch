@@ -15,7 +15,7 @@ WEIGHTS = {
     "responsibilities": 0.10,
 }
 
-SCORING_PROMPT = """You are a strict, senior technical recruiter scoring a candidate's resume against a job's requirements.
+SCORING_PROMPT = """You are an expert HR recruiter scoring a candidate's resume against a job's requirements.
 
 JOB REQUIREMENTS:
 {jd_requirements}
@@ -53,19 +53,14 @@ Score the candidate across 5 dimensions (each 0-100) and return ONLY valid JSON 
   "recommendation": "Potential Match"
 }}
 
-Scoring rules — read carefully, these are strict:
+Scoring rules:
 - Be objective and evidence-based. Only score what is present in the resume.
-- PRIMARY vs SECONDARY skills: A skill listed under a job title focused on OTHER work (e.g. an AI Engineer who mentions Java in passing) does NOT count as "strong experience". Strong experience means the skill is central to their role, not incidental.
-- skills_match score must reflect whether required skills are the candidate's PRIMARY expertise. A candidate whose primary focus is different from the role should score 40-60 even if they list some matching keywords.
-- role_alignment must be LOW (under 50) if the candidate's job titles and primary work are in a different discipline than the role (e.g. AI/ML Engineer applying for Java Full Stack, or DevOps applying for Data Science).
-- experience score must account for whether years of experience are in the RELEVANT domain, not just total career length.
-- Do not inflate scores because a candidate lists many technologies — assess whether those technologies are their core competency.
-- skills_match.matched_skills: required skills where the candidate has DEMONSTRATED primary experience (not just listed in a skills section)
-- skills_match.missing_skills: required skills NOT found or only superficially mentioned
+- skills_match.matched_skills: skills from required_skills found in resume (list strings)
+- skills_match.missing_skills: skills from required_skills NOT found in resume (list strings)
 - recommendation must be EXACTLY one of: "Strong Match", "Potential Match", "Weak Match"
-- Strong Match (80+): candidate is clearly qualified with primary expertise matching the role
-- Potential Match (60-79): candidate is partially qualified, has relevant experience but notable gaps
-- Weak Match (below 60): candidate's primary focus is different from the role OR lacks key requirements"""
+- Strong Match = candidate is clearly qualified and meets most requirements
+- Potential Match = candidate is partially qualified, worth a closer look
+- Weak Match = candidate clearly lacks key requirements"""
 
 
 def compute_overall_score(dimensions: dict) -> int:
