@@ -1,7 +1,5 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "resumematch/frontend/dist",
-  "installCommand": "cd resumematch/frontend && npm install",
+  "rootDirectory": "resumematch/frontend",
   "framework": "vite",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
