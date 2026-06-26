@@ -1,7 +1,7 @@
 {
-  "installCommand": "npm --prefix resumematch/frontend install",
-  "buildCommand": "npm --prefix resumematch/frontend run build",
-  "outputDirectory": "resumematch/frontend/dist",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
