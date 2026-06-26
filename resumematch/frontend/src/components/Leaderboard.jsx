@@ -47,7 +47,7 @@ function toCSV(results) {
   return [headers.map(escape).join(','), ...rows].join('\r\n')
 }
 
-export default function Leaderboard({ results, sessionId }) {
+export default function Leaderboard({ results, sessionId, weights }) {
   const bands = BAND_COUNTS(results)
 
   const handleExport = () => {
@@ -85,7 +85,7 @@ export default function Leaderboard({ results, sessionId }) {
       {/* Candidate cards */}
       <div className="leaderboard-list">
         {results.map((result, i) => (
-          <ScoreCard key={`${result.candidate_name}-${i}`} result={result} rank={i + 1} />
+          <ScoreCard key={`${result.candidate_name}-${i}`} result={result} rank={i + 1} weights={weights} />
         ))}
       </div>
 

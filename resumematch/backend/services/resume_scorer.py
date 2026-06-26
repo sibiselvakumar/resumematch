@@ -63,10 +63,11 @@ Scoring rules:
 - Weak Match = candidate clearly lacks key requirements"""
 
 
-def compute_overall_score(dimensions: dict) -> int:
+def compute_overall_score(dimensions: dict, weights: dict = None) -> int:
     """Compute weighted overall score from dimension scores."""
+    w = weights if weights is not None else WEIGHTS
     total = 0.0
-    for key, weight in WEIGHTS.items():
+    for key, weight in w.items():
         dim = dimensions.get(key, {})
         score = dim.get("score", 0)
         total += score * weight
@@ -82,7 +83,7 @@ def get_recommendation(overall_score: int) -> str:
         return "Weak Match"
 
 
-async def score_resume(jd_requirements: dict, resume_text: str, candidate_name: str) -> dict:
+async def score_resume(jd_requirements: dict, resume_text: str, candidate_name: str, weights: dict = None) -> dict:
     """
     Pass 2: Score a resume against structured JD requirements.
     Returns a dict with overall_score, dimensions, summary, recommendation.
@@ -115,7 +116,7 @@ async def score_resume(jd_requirements: dict, resume_text: str, candidate_name: 
     dimensions = result.get("dimensions", {})
 
     # Validate all expected dimensions exist
-    for key in WEIGHTS:
+    for key in (weights or WEIGHTS):
         if key not in dimensions:
             dimensions[key] = {"score": 0, "note": "Could not evaluate this dimension."}
 
@@ -126,7 +127,7 @@ async def score_resume(jd_requirements: dict, resume_text: str, candidate_name: 
     sm.setdefault("note", "")
 
     # Compute overall score using our weights (not LLM's)
-    overall = compute_overall_score(dimensions)
+    overall = compute_overall_score(dimensions, weights)
     recommendation = get_recommendation(overall)
 
     return {

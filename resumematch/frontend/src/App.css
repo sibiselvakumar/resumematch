@@ -93,6 +93,13 @@
   padding: 24px;
 }
 
+.upload-section--full {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
 .section-title {
   font-size: 16px;
   font-weight: 600;

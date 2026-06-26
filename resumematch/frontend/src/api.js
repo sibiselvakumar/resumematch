@@ -6,7 +6,7 @@ const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api'
  * @param {File|null} jdFile - Job description as a file
  * @param {File[]} resumeFiles - Array of resume files
  */
-export async function analyzeResumes(jdText, jdFile, resumeFiles) {
+export async function analyzeResumes(jdText, jdFile, resumeFiles, weights) {
   const formData = new FormData()
 
   if (jdFile) {
@@ -17,6 +17,15 @@ export async function analyzeResumes(jdText, jdFile, resumeFiles) {
 
   for (const file of resumeFiles) {
     formData.append('resumes', file)
+  }
+
+  if (weights) {
+    // Convert from percentage (0–100) to decimal (0–1) for the backend
+    const normalized = {}
+    for (const [k, v] of Object.entries(weights)) {
+      normalized[k] = v / 100
+    }
+    formData.append('weights_json', JSON.stringify(normalized))
   }
 
   const response = await fetch(`${API_BASE}/analyze`, {

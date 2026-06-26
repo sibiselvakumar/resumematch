@@ -1,6 +1,7 @@
 import asyncio
 import io
 import csv
+import json
 import uuid
 from typing import List, Optional
 
@@ -20,6 +21,7 @@ async def analyze_resumes(
     resumes: List[UploadFile] = File(..., description="One or more resume files (PDF or DOCX)"),
     jd_text: Optional[str] = Form(None, description="Job description as plain text"),
     jd_file: Optional[UploadFile] = File(None, description="Job description as PDF or DOCX"),
+    weights_json: Optional[str] = Form(None, description="JSON object of scoring weights (values 0–1, must sum to 1.0)"),
 ):
     """
     Main endpoint: upload a JD + resumes, get back scored & ranked candidates.
@@ -41,6 +43,17 @@ async def analyze_resumes(
 
     if not resumes:
         raise HTTPException(status_code=400, detail="At least one resume file is required.")
+
+    # ── 1b. Parse custom weights (optional) ─────────────────────────────────
+    custom_weights = None
+    if weights_json:
+        try:
+            custom_weights = json.loads(weights_json)
+            total = sum(custom_weights.values())
+            if abs(total - 1.0) > 0.02:
+                raise HTTPException(status_code=400, detail=f"Weights must sum to 1.0 (got {round(total, 3)})")
+        except (json.JSONDecodeError, AttributeError):
+            raise HTTPException(status_code=400, detail="Invalid weights_json — expected a JSON object")
 
     # ── 2. Pass 1: Analyze JD once ──────────────────────────────────────────
     try:
@@ -86,7 +99,7 @@ async def analyze_resumes(
                 "recommendation": "Weak Match",
                 "error": "Empty resume",
             }
-        return await score_resume(jd_requirements, resume_text, candidate_name)
+        return await score_resume(jd_requirements, resume_text, candidate_name, weights=custom_weights)
 
     try:
         results = list(await asyncio.gather(*[process_resume(r) for r in resumes]))

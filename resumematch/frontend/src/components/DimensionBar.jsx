@@ -8,7 +8,7 @@ const DIMENSION_LABELS = {
   responsibilities: 'Responsibilities',
 }
 
-const WEIGHTS = {
+const DEFAULT_WEIGHTS = {
   skills_match: 35,
   experience: 30,
   role_alignment: 15,
@@ -22,9 +22,9 @@ function scoreColor(score) {
   return 'red'
 }
 
-export default function DimensionBar({ dimensionKey, data }) {
+export default function DimensionBar({ dimensionKey, data, weight }) {
   const label = DIMENSION_LABELS[dimensionKey] || dimensionKey
-  const weight = WEIGHTS[dimensionKey] || 0
+  const displayWeight = weight ?? DEFAULT_WEIGHTS[dimensionKey] ?? 0
   const score = data?.score ?? 0
   const color = scoreColor(score)
 
@@ -33,7 +33,7 @@ export default function DimensionBar({ dimensionKey, data }) {
       <div className="dim-bar-header">
         <div className="dim-bar-label">
           <span className="dim-bar-name">{label}</span>
-          <span className="dim-bar-weight">{weight}%</span>
+          <span className="dim-bar-weight">{displayWeight}%</span>
         </div>
         <span className={`dim-bar-score dim-bar-score--${color}`}>{score}</span>
       </div>

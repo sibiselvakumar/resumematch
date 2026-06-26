@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import JDUploader from './components/JDUploader'
 import ResumeUploader from './components/ResumeUploader'
+import WeightConfig, { DEFAULT_WEIGHTS } from './components/WeightConfig'
 import Leaderboard from './components/Leaderboard'
 import { analyzeResumes } from './api'
 import './App.css'
@@ -20,11 +21,16 @@ export default function App() {
   const [results, setResults] = useState(null)
   const [error, setError] = useState(null)
   const [loadingMsg, setLoadingMsg] = useState(LOADING_MESSAGES[0])
+  const [weights, setWeights] = useState({ ...DEFAULT_WEIGHTS })
+
+  const weightsTotal = Object.values(weights).reduce((a, b) => a + b, 0)
+  const weightsValid = weightsTotal === 100
 
   const handleScreening = async () => {
     const hasJD = jdText.trim().length > 0 || jdFile
     if (!hasJD) { setError('Please provide a job description.'); return }
     if (resumes.length === 0) { setError('Please upload at least one resume.'); return }
+    if (!weightsValid) { setError('Scoring weights must add up to 100%.'); return }
 
     setError(null)
     setStage('loading')
@@ -38,7 +44,7 @@ export default function App() {
     }, 4000)
 
     try {
-      const data = await analyzeResumes(jdText, jdFile, resumes)
+      const data = await analyzeResumes(jdText, jdFile, resumes, weights)
       setResults(data)
       setStage('results')
     } catch (err) {
@@ -56,6 +62,7 @@ export default function App() {
     setResumes([])
     setResults(null)
     setError(null)
+    setWeights({ ...DEFAULT_WEIGHTS })
   }
 
   return (
@@ -104,11 +111,19 @@ export default function App() {
               </div>
             </div>
 
+            <div className="upload-section upload-section--full">
+              <h2 className="section-title">
+                <span className="step-badge">3</span>
+                Scoring Weights
+              </h2>
+              <WeightConfig weights={weights} onChange={setWeights} />
+            </div>
+
             <div className="screen-action">
               <button
                 className="screen-btn"
                 onClick={handleScreening}
-                disabled={(!jdText.trim() && !jdFile) || resumes.length === 0}
+                disabled={(!jdText.trim() && !jdFile) || resumes.length === 0 || !weightsValid}
               >
                 🔍 Screen Resumes
                 {resumes.length > 0 && (
@@ -169,7 +184,7 @@ export default function App() {
               </div>
             )}
 
-            <Leaderboard results={results.results ?? []} sessionId={results.session_id} />
+            <Leaderboard results={results.results ?? []} sessionId={results.session_id} weights={weights} />
           </div>
         )}
       </main>

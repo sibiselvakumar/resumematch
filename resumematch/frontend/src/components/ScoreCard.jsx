@@ -16,7 +16,7 @@ const RECOMMENDATION_ICON = {
   'Weak Match': '🔴',
 }
 
-export default function ScoreCard({ result, rank }) {
+export default function ScoreCard({ result, rank, weights }) {
   const [expanded, setExpanded] = useState(false)
   const color = scoreColor(result.overall_score)
   const icon = RECOMMENDATION_ICON[result.recommendation] || '⚪'
@@ -60,7 +60,7 @@ export default function ScoreCard({ result, rank }) {
         <div className="score-card-dimensions">
           {DIMENSION_ORDER.map(key =>
             result.dimensions[key] ? (
-              <DimensionBar key={key} dimensionKey={key} data={result.dimensions[key]} />
+              <DimensionBar key={key} dimensionKey={key} data={result.dimensions[key]} weight={weights?.[key]} />
             ) : null
           )}
         </div>
