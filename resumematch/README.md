@@ -1,6 +1,6 @@
 # ResumeMatch — AI Resume Screening Tool
 
-Internal HR tool that scores resumes against a job description using Groq + Llama 3.1.
+Internal HR tool that scores resumes against a job description using the NVIDIA API + GLM-5.2.
 
 ---
 
@@ -10,7 +10,7 @@ Internal HR tool that scores resumes against a job description using Groq + Llam
 
 - Python 3.10+
 - Node.js 18+
-- A free [Groq API key](https://console.groq.com) (takes 1 minute)
+- An [NVIDIA API key](https://build.nvidia.com) (takes 1 minute)
 
 ---
 
@@ -26,9 +26,9 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Open `.env` and paste your Groq API key:
+Open `.env` and paste your NVIDIA API key:
 ```
-GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxx
+NVIDIA_API_KEY=nvapi-xxxxxxxxxxxxxxxxxxxx
 ```
 
 Start the backend server:
@@ -156,7 +156,7 @@ resumematch/
 
 ## Troubleshooting
 
-**"GROQ_API_KEY environment variable is not set"**
+**"NVIDIA_API_KEY environment variable is not set"**
 → Make sure you created `.env` in the `backend/` folder with your key.
 
 **"Analysis failed" error in the UI**
@@ -165,8 +165,8 @@ resumematch/
 **PDF text extraction returns empty**
 → The PDF is likely a scanned image. Export the original document as a searchable PDF or use DOCX instead.
 
-**Groq rate limit errors**
-→ The free Groq tier has limits. Wait 60 seconds and retry, or upgrade your Groq plan.
+**NVIDIA API rate limit errors**
+→ Wait 60 seconds and retry, or check your usage tier on build.nvidia.com.
 
 **Port 5173 already in use**
 → Change the Vite port in `vite.config.js` and update the CORS origins in `backend/main.py`.
@@ -187,5 +187,5 @@ npm run build
 - Connect your GitHub repo
 - Set Build Command: `pip install -r requirements.txt`
 - Set Start Command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-- Add `GROQ_API_KEY` as an environment variable
+- Add `NVIDIA_API_KEY` as an environment variable
 - Update CORS origins in `main.py` with your Vercel URL

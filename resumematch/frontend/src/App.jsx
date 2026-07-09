@@ -13,6 +13,12 @@ const LOADING_MESSAGES = [
   'Ranking your candidates...',
 ]
 
+function formatElapsed(totalSec) {
+  const m = Math.floor(totalSec / 60)
+  const s = totalSec % 60
+  return m > 0 ? `${m}m ${s}s` : `${s}s`
+}
+
 export default function App() {
   const [stage, setStage] = useState('upload') // 'upload' | 'loading' | 'results'
   const [jdText, setJdText] = useState('')
@@ -21,6 +27,7 @@ export default function App() {
   const [results, setResults] = useState(null)
   const [error, setError] = useState(null)
   const [loadingMsg, setLoadingMsg] = useState(LOADING_MESSAGES[0])
+  const [elapsedSec, setElapsedSec] = useState(0)
   const [weights, setWeights] = useState({ ...DEFAULT_WEIGHTS })
 
   const weightsTotal = Object.values(weights).reduce((a, b) => a + b, 0)
@@ -43,6 +50,15 @@ export default function App() {
       setLoadingMsg(LOADING_MESSAGES[msgIdx])
     }, 4000)
 
+    // Real elapsed time, ticking every second — actual runs range from
+    // ~30s to several minutes depending on model/API load, so a fixed
+    // estimate is misleading.
+    setElapsedSec(0)
+    const timerStart = Date.now()
+    const timerInterval = setInterval(() => {
+      setElapsedSec(Math.floor((Date.now() - timerStart) / 1000))
+    }, 1000)
+
     try {
       const data = await analyzeResumes(jdText, jdFile, resumes, weights)
       setResults(data)
@@ -52,6 +68,7 @@ export default function App() {
       setStage('upload')
     } finally {
       clearInterval(msgInterval)
+      clearInterval(timerInterval)
     }
   }
 
@@ -143,7 +160,7 @@ export default function App() {
             <div className="loading-spinner" />
             <p className="loading-text">{loadingMsg}</p>
             <p className="loading-sub">
-              This takes 10–30 seconds · Scoring {resumes.length} resume{resumes.length !== 1 ? 's' : ''} in parallel
+              Elapsed: {formatElapsed(elapsedSec)} (up to 5 min max) · Scoring {resumes.length} resume{resumes.length !== 1 ? 's' : ''} in parallel
             </p>
           </div>
         )}
@@ -190,7 +207,7 @@ export default function App() {
       </main>
 
       <footer className="footer">
-        ResumeMatch · Internal HR Tool · Powered by Groq + Llama 3.1 70B
+        ResumeMatch · Internal HR Tool · Powered by NVIDIA API + Llama 3.1 8B
       </footer>
     </div>
   )

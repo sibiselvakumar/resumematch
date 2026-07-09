@@ -1,3 +1,4 @@
+import logging
 import os
 from contextlib import asynccontextmanager
 
@@ -6,6 +7,17 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from database import init_db
 from routers.analyze import router as analyze_router
+
+# Diagnostic logging for the "why is this slow" investigation.
+# openai/httpx at DEBUG/INFO reveal retries and the raw HTTP status of every
+# call to the NVIDIA API (429s, 5xxs, timeouts) that would otherwise be
+# retried silently by the SDK and never surfaced as an error.
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+logging.getLogger("openai").setLevel(logging.DEBUG)
+logging.getLogger("httpx").setLevel(logging.INFO)
 
 
 @asynccontextmanager

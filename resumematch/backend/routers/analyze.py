@@ -15,6 +15,11 @@ from services.resume_scorer import score_resume
 
 router = APIRouter()
 
+# Caps concurrent NVIDIA API calls so a large resume batch doesn't burst past
+# the account's 40 RPM limit all in the same second (asyncio.gather otherwise
+# fires every resume's request simultaneously).
+_SCORING_SEMAPHORE = asyncio.Semaphore(15)
+
 
 @router.post("/analyze")
 async def analyze_resumes(
@@ -99,7 +104,8 @@ async def analyze_resumes(
                 "recommendation": "Weak Match",
                 "error": "Empty resume",
             }
-        return await score_resume(jd_requirements, resume_text, candidate_name, weights=custom_weights)
+        async with _SCORING_SEMAPHORE:
+            return await score_resume(jd_requirements, resume_text, candidate_name, weights=custom_weights)
 
     try:
         results = list(await asyncio.gather(*[process_resume(r) for r in resumes]))

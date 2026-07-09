@@ -1,23 +1,27 @@
 import json
+import logging
 import os
-from groq import AsyncGroq
+import time
+from openai import AsyncOpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
 
+logger = logging.getLogger("resumematch.jd_analyzer")
+
 _client = None
 
-def get_client() -> AsyncGroq:
+def get_client() -> AsyncOpenAI:
     global _client
     if _client is None:
-        api_key = os.environ.get("GROQ_API_KEY")
+        api_key = os.environ.get("NVIDIA_API_KEY")
         if not api_key:
-            raise RuntimeError("GROQ_API_KEY environment variable is not set. Copy .env.example to .env and add your key.")
-        _client = AsyncGroq(api_key=api_key)
+            raise RuntimeError("NVIDIA_API_KEY environment variable is not set. Copy .env.example to .env and add your key.")
+        _client = AsyncOpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=api_key)
     return _client
 
 
-MODEL = "llama-3.3-70b-versatile"
+MODEL = "meta/llama-3.1-8b-instruct"
 
 JD_ANALYSIS_PROMPT = """You are an expert technical recruiter. Analyze this job description and extract structured requirements.
 
@@ -53,18 +57,32 @@ async def analyze_jd(jd_text: str) -> dict:
     Returns a dict with role_title, required_skills, preferred_skills, etc.
     """
     client = get_client()
-    response = await client.chat.completions.create(
-        model=MODEL,
-        messages=[
-            {
-                "role": "user",
-                "content": JD_ANALYSIS_PROMPT.format(jd_text=jd_text[:8000])
-            }
-        ],
-        response_format={"type": "json_object"},
-        temperature=0.1,
-        max_tokens=1200,
-    )
+    start = time.monotonic()
+    try:
+        response = await client.chat.completions.create(
+            model=MODEL,
+            messages=[
+                {
+                    "role": "user",
+                    "content": JD_ANALYSIS_PROMPT.format(jd_text=jd_text[:8000])
+                }
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.1,
+            max_tokens=1200,
+        )
+    except Exception as e:
+        elapsed = time.monotonic() - start
+        status_code = getattr(e, "status_code", None)
+        resp = getattr(e, "response", None)
+        retry_after = resp.headers.get("retry-after") if resp is not None else None
+        logger.error(
+            "analyze_jd FAILED after %.1fs status=%s retry_after=%s error=%s",
+            elapsed, status_code, retry_after, e,
+        )
+        raise
+    elapsed = time.monotonic() - start
+    logger.info("analyze_jd OK in %.1fs (model=%s)", elapsed, MODEL)
 
     raw = response.choices[0].message.content
     try:

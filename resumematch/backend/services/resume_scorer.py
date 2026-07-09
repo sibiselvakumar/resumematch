@@ -1,10 +1,13 @@
 import json
+import logging
 import os
-from groq import AsyncGroq
+import time
 from dotenv import load_dotenv
 from .jd_analyzer import get_client, MODEL
 
 load_dotenv()
+
+logger = logging.getLogger("resumematch.resume_scorer")
 
 # Scoring weights — must sum to 1.0
 WEIGHTS = {
@@ -91,21 +94,35 @@ async def score_resume(jd_requirements: dict, resume_text: str, candidate_name: 
     client = get_client()
     jd_str = json.dumps(jd_requirements, indent=2)
 
-    response = await client.chat.completions.create(
-        model=MODEL,
-        messages=[
-            {
-                "role": "user",
-                "content": SCORING_PROMPT.format(
-                    jd_requirements=jd_str,
-                    resume_text=resume_text[:6000],
-                )
-            }
-        ],
-        response_format={"type": "json_object"},
-        temperature=0.1,
-        max_tokens=1500,
-    )
+    start = time.monotonic()
+    try:
+        response = await client.chat.completions.create(
+            model=MODEL,
+            messages=[
+                {
+                    "role": "user",
+                    "content": SCORING_PROMPT.format(
+                        jd_requirements=jd_str,
+                        resume_text=resume_text[:6000],
+                    )
+                }
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.1,
+            max_tokens=1500,
+        )
+    except Exception as e:
+        elapsed = time.monotonic() - start
+        status_code = getattr(e, "status_code", None)
+        resp = getattr(e, "response", None)
+        retry_after = resp.headers.get("retry-after") if resp is not None else None
+        logger.error(
+            "score_resume FAILED after %.1fs candidate=%r status=%s retry_after=%s error=%s",
+            elapsed, candidate_name, status_code, retry_after, e,
+        )
+        raise
+    elapsed = time.monotonic() - start
+    logger.info("score_resume OK in %.1fs candidate=%r (model=%s)", elapsed, candidate_name, MODEL)
 
     raw = response.choices[0].message.content
     try:
