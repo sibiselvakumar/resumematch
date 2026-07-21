@@ -1,3 +1,4 @@
+import hashlib
 import json
 import logging
 import os
@@ -21,7 +22,13 @@ def get_client() -> AsyncOpenAI:
     return _client
 
 
-MODEL = "meta/llama-3.1-8b-instruct"
+MODEL = "meta/llama-3.1-70b-instruct"
+SEED = 42
+
+
+def hash_jd_text(jd_text: str) -> str:
+    """Stable cache key for a JD's text, so repeat screenings of the same JD reuse the same extracted requirements instead of re-deriving (and drifting) them each time."""
+    return hashlib.sha256(jd_text.strip().encode("utf-8")).hexdigest()
 
 JD_ANALYSIS_PROMPT = """You are an expert technical recruiter. Analyze this job description and extract structured requirements.
 
@@ -68,8 +75,9 @@ async def analyze_jd(jd_text: str) -> dict:
                 }
             ],
             response_format={"type": "json_object"},
-            temperature=0.1,
+            temperature=0,
             max_tokens=1200,
+            seed=SEED,
         )
     except Exception as e:
         elapsed = time.monotonic() - start

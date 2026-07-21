@@ -1,6 +1,6 @@
 # ResumeMatch — AI Resume Screening Tool
 
-Internal HR tool that scores resumes against a job description using the NVIDIA API + Llama 3.1 8B.
+Internal HR tool that scores resumes against a job description using the NVIDIA API + Llama 3.1 70B.
 
 ---
 

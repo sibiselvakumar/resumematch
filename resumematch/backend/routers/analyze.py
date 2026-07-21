@@ -8,8 +8,14 @@ from typing import List, Optional
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 
-from database import get_session, get_sessions, save_session
-from services.jd_analyzer import analyze_jd
+from database import (
+    get_cached_jd_requirements,
+    get_session,
+    get_sessions,
+    save_jd_requirements,
+    save_session,
+)
+from services.jd_analyzer import analyze_jd, hash_jd_text
 from services.parser import extract_text, get_candidate_name
 from services.resume_scorer import score_resume
 
@@ -60,13 +66,20 @@ async def analyze_resumes(
         except (json.JSONDecodeError, AttributeError):
             raise HTTPException(status_code=400, detail="Invalid weights_json — expected a JSON object")
 
-    # ── 2. Pass 1: Analyze JD once ──────────────────────────────────────────
-    try:
-        jd_requirements = await analyze_jd(jd_content)
-    except RuntimeError as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=f"JD analysis failed: {e}")
+    # ── 2. Pass 1: Analyze JD once, cached by JD text ────────────────────────
+    # Repeated screenings of the identical JD reuse the same extracted
+    # requirements instead of re-deriving (and potentially drifting on) them
+    # on every submission.
+    jd_hash = hash_jd_text(jd_content)
+    jd_requirements = await get_cached_jd_requirements(jd_hash)
+    if jd_requirements is None:
+        try:
+            jd_requirements = await analyze_jd(jd_content)
+        except RuntimeError as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        except Exception as e:
+            raise HTTPException(status_code=502, detail=f"JD analysis failed: {e}")
+        await save_jd_requirements(jd_hash, jd_requirements)
 
     # ── 3. Pass 2: Score resumes concurrently ────────────────────────────────
     async def process_resume(resume: UploadFile) -> dict:

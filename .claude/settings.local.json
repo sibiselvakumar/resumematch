@@ -7,7 +7,21 @@
       "Bash(echo \"exit:$?\")",
       "Read(//c/Users/Sibi/AppData/Local/Temp/claude/C--Users-Sibi-Documents-claude-code-test/0e27b4d0-628e-4253-949c-a8118bf2e7f4/scratchpad/**)",
       "WebSearch",
-      "Bash(python -m py_compile routers/analyze.py services/jd_analyzer.py)"
+      "Bash(python -m py_compile routers/analyze.py services/jd_analyzer.py)",
+      "Bash(python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000)",
+      "Bash(npm run *)",
+      "Bash(netstat -ano)",
+      "Bash(powershell -NoProfile -Command \"Get-Process -Id 27808,23940,21696 -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,Path,StartTime\" 2>&1)",
+      "Bash(python -c ' *)",
+      "Bash(powershell -NoProfile -Command \"\n\\\\$conns = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue\n\\\\$conns | ForEach-Object { Get-Process -Id \\\\$_.OwningProcess | Select-Object Id,ProcessName,Path }\n\" 2>&1)",
+      "Bash(powershell -NoProfile -Command \"Stop-Process -Id 22160,7144 -Force -ErrorAction SilentlyContinue\")",
+      "Bash(powershell -NoProfile -Command \"\nGet-NetTCPConnection -LocalPort 8000,5173 -State Listen -ErrorAction SilentlyContinue | ForEach-Object {\n  \\\\$p = Get-Process -Id \\\\$_.OwningProcess -ErrorAction SilentlyContinue\n  [PSCustomObject]@{ Port=\\\\$_.LocalPort; Pid=\\\\$_.OwningProcess; Name=\\\\$p.ProcessName }\n}\n\" 2>&1)",
+      "Bash(powershell -NoProfile -Command \"Get-CimInstance Win32_Process -Filter 'ParentProcessId=14740' | Select-Object ProcessId,Name\" 2>&1)",
+      "Bash(powershell -NoProfile -Command \"Stop-Process -Id 14740,25860,10236 -Force -ErrorAction SilentlyContinue\")",
+      "Bash(powershell -NoProfile -Command \"Get-CimInstance Win32_Process -Filter \\\\\"ProcessId=17876\\\\\" | Select-Object ProcessId,CommandLine\" 2>&1)",
+      "Bash(powershell -NoProfile -Command \"\n\\\\$conn = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue | Where-Object { \\\\$_.OwningProcess -ne 27808 }\n\\\\$conn | ForEach-Object { \\\\$_.OwningProcess }\n\" 2>&1)",
+      "Bash(powershell -NoProfile -Command \"Get-CimInstance Win32_Process -Filter 'ParentProcessId=21920' | Select-Object ProcessId\" 2>&1)",
+      "Bash(powershell -NoProfile -Command \"Stop-Process -Id 21920,3756 -Force -ErrorAction SilentlyContinue\")"
     ]
   }
 }

@@ -207,7 +207,7 @@ export default function App() {
       </main>
 
       <footer className="footer">
-        ResumeMatch · Internal HR Tool · Powered by NVIDIA API + Llama 3.1 8B
+        ResumeMatch · Internal HR Tool · Powered by NVIDIA API + Llama 3.1 70B
       </footer>
     </div>
   )
